@@ -16,4 +16,6 @@ I decide to use pipenv https://docs.python-guide.org/dev/virtualenvs/.
     1. Install MySql
     2. Create database 'comments'
     3. Create user 'microservice'
+    4. test database connection with:
+        http://localhost:5000/database
     
