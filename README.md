@@ -10,7 +10,7 @@ I decide to use pipenv https://docs.python-guide.org/dev/virtualenvs/.
     4. Install required dependencies
         pipenv install
     5. Start the server on localhost: 
-        python3 app.py
+        python3 microservice.py
 
 ## Setup database
     1. Install MySql
@@ -19,3 +19,7 @@ I decide to use pipenv https://docs.python-guide.org/dev/virtualenvs/.
     4. test database connection with:
         http://localhost:5000/database
     
+
+### Initialize database
+    export FLASK_APP=run.py
+    flask init-db

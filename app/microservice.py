@@ -1,11 +1,9 @@
 from flask import Flask,jsonify
 import os
-from db import db
-from init import create_app
+from app.db import db
+from app.init import create_app
 
-
-
-app = create_app();
+app = create_app()
 db.init_app(app)
 
 @app.route("/")
@@ -48,8 +46,3 @@ def comments_by_post_id(postId):
     response['PostId'] = postId
     response['Body'] = 'Comment description'
     return jsonify(response)
-
-
-
-if __name__ == "__main__":
-    app.run()

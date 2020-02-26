@@ -1,7 +1,7 @@
 import pytest 
 from unittest import mock
 from flask import current_app, g
-from CommentsMicroservice import microservice
+from app import microservice
 
 
 @pytest.fixture
