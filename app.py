@@ -1,7 +1,10 @@
 from flask import Flask,jsonify
 from flaskext.mysql import MySQL
+from db import db
+from init import create_app
 
-app = Flask(__name__)
+app = create_app();
+db.init_app(app)
 mysql = MySQL()
  
 # MySQL configurations
@@ -19,8 +22,10 @@ def main():
 # Need to setup mysql beforehand
 @app.route("/database")
 def db_test():
-    conn = mysql.connect()
-    return "Database connected"
+    # conn = mysql.connect()
+    # return "Database connected"
+    d = db.get_db()
+    return "Database connected .... " + repr(d)
 
 
 @app.route("/api/comment/<id>/")
@@ -31,6 +36,8 @@ def comment(id):
     response['UserId'] = '213344'
     response['Desc'] = 'Comment description'
     return jsonify(response)
+
+
 
 if __name__ == "__main__":
     app.run()
