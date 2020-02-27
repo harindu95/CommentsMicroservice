@@ -7,10 +7,10 @@ from app import microservice
 @pytest.fixture
 def client():
     app = microservice.app
-    app.config['MYSQL_DATABASE_USER'] = 'microservice'
-    app.config['MYSQL_DATABASE_PASSWORD'] = ''
-    app.config['MYSQL_DATABASE_DB'] = 'comments'
-    app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+    # app.config['MYSQL_DATABASE_USER'] = 'microservice'
+    # app.config['MYSQL_DATABASE_PASSWORD'] = ''
+    # app.config['MYSQL_DATABASE_DB'] = 'comments'
+    # app.config['MYSQL_DATABASE_HOST'] = 'localhost'
     testing_client = app.test_client()
     ctx = app.app_context()
     ctx.push()
