@@ -23,6 +23,6 @@ def test_database_connection(client):
      assert b"Database connected" in response.data
     
 def test_get_comment(client):
-    response = client.get('/api/comment/1233/')
+    response = client.get('/api/comment/id/1233/')
     assert response.status_code == 200
     assert b"1233" in response.data
