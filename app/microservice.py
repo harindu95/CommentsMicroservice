@@ -3,7 +3,7 @@ import os
 from app.db import db
 from app.init import create_app
 from app.db.comment import Comment
-import app.events as events
+from app import command
 
 app = create_app()
 db.init_app(app)
@@ -46,7 +46,7 @@ def comments_by_post_id(postId):
     response['CommentId'] = '1232'
     response['UserId'] = '23424'
     response['PostId'] = postId
-    response['Body'] = 'Comment description'
+    response['Body'] = 'Comment description'    
     return jsonify(response)
 
 
@@ -55,9 +55,7 @@ def new_comment():
     userId = request.form["UserId"]
     postId = request.form["PostId"]
     body = request.form["Body"]
-    comment = Comment(userId, postId, body)
-    event = events.newComment(comment)
-    events.fireEvent(event)
+    command.new_comment(userId, postId, body)
     resp = jsonify(success=True)
     return resp
 
@@ -67,9 +65,7 @@ def update_comment():
     userId = request.form["UserId"]
     postId = request.form["PostId"]
     body = request.form["Body"]
-    comment = Comment(userId, postId, body, id=commentId)
-    event = events.updateComment(comment)
-    events.fireEvent(event)
+    command.update_comment(commentId, userId, postId, body)
     resp = jsonify(success=True)
     return resp
 
@@ -79,8 +75,6 @@ def delete_comment():
     userId = request.form["UserId"]
     postId = request.form["PostId"]
     body = request.form["Body"]
-    comment = Comment(userId, postId, body)
-    event = events.deleteComment(comment)
-    events.fireEvent(event)
+    command.delete_com(userId, postId, body)
     resp = jsonify(success=True)
     return resp
