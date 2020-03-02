@@ -7,7 +7,8 @@ CREATE TABLE Comments (
   post_id INTEGER NOT NULL,
   user_id INTEGER NOT NULL,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  body TEXT NOT NULL
+  body TEXT NOT NULL,
+  parent_id INTEGER
 );
 
 CREATE TABLE EventStore (
@@ -18,5 +19,6 @@ CREATE TABLE EventStore (
   post_id INTEGER NOT NULL,
   user_id INTEGER NOT NULL,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  body TEXT NOT NULL
+  body TEXT NOT NULL,
+  parent_id INTEGER
 );

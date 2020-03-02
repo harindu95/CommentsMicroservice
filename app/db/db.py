@@ -5,6 +5,7 @@ from flask import current_app, g
 from flask.cli import with_appcontext
 from app.db.comment import Comment
 
+
 def get_db():
     # if 'db' not in g:
     #     g.db = sqlite3.connect(
@@ -58,8 +59,8 @@ def storeEvent(event):
     connection = get_db()
     cursor = connection.cursor()
     sql_insert_query = """ INSERT INTO EventStore
-                       (event, comment_id, post_id, user_id, created,body) VALUES (%s,%s,%s,%s, %s, %s);"""
-    cursor.execute(sql_insert_query, (event.type, event.comment.id, event.comment.postId, event.comment.userId ,event.comment.created, event.comment.body))
+                       (event, comment_id, post_id, user_id, created, body, parent_id) VALUES (%s,%s,%s,%s, %s, %s, %s);"""
+    cursor.execute(sql_insert_query, (event.type, event.comment.id, event.comment.postId, event.comment.userId ,event.comment.created, event.comment.body, event.comment.parent_id))
 
 
 
@@ -74,10 +75,48 @@ def getComment(id):
         return None
     else:
         print(result)
-        (id,user_id, post_id,created,body) = result
-        comment = Comment(user_id, post_id, body,id)
+        (id,user_id, post_id,created,body ,parent_id) = result
+        comment = Comment(user_id, post_id, body,id,parent_id)
         comment.created = created
         return comment
+
+def getCommentsUserId(userId):
+    connection = get_db()
+    cursor = connection.cursor()
+    sql = """SELECT * FROM Comments WHERE user_id=%s;"""
+
+    cursor.execute(sql,(userId))
+    result = cursor.fetchone()
+    comments = []
+    if result == None:
+        return comments
+    for row in result:  
+        print(result)
+        (id,user_id, post_id,created,body ,parent_id) = row
+        comment = Comment(user_id, post_id, body,id,parent_id)
+        comment.created = created
+        comments.append(comment)
+
+    return comments
+
+def getCommentsPostId(postId):
+    connection = get_db()
+    cursor = connection.cursor()
+    sql = """SELECT * FROM Comments WHERE post_id=%s;"""
+
+    cursor.execute(sql,(postId))
+    result = cursor.fetchone()
+    comments = []
+    if result == None:
+        return comments
+    for row in result:  
+        print(result)
+        (id,user_id, post_id,created,body ,parent_id) = row
+        comment = Comment(user_id, post_id, body,id,parent_id)
+        comment.created = created
+        comments.append(comment)
+
+    return comments
 
 def storeComment(comment):
     connection = get_db()
@@ -85,12 +124,12 @@ def storeComment(comment):
     if comment.id == None:
         print("Comment.id is empty")
         sql_insert_query = """ INSERT INTO Comments
-                       (post_id, user_id, created, body) VALUES (%s,%s,%s,%s);"""
+                       (post_id, user_id, created, body, parent_id) VALUES (%s,%s,%s,%s,%s);"""
         cursor.execute(sql_insert_query, ( comment.postId,
-     comment.userId , comment.created, comment.body))
+     comment.userId , comment.created, comment.body, comment.parent_id))
     else:
         print("Comment.id is " + str(comment.id))
         sql_insert_query = """ INSERT INTO Comments
-                       (id, post_id, user_id, created, body) VALUES (%s,%s,%s,%s, %s);"""
+                       (id, post_id, user_id, created, body, parent_id) VALUES (%s,%s,%s,%s,%s, %s);"""
         cursor.execute(sql_insert_query, ( comment.id, comment.postId,
-     comment.userId , comment.created, comment.body))
+     comment.userId , comment.created, comment.body, comment.parent_id))

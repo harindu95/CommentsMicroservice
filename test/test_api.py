@@ -1,6 +1,6 @@
 import pytest 
 from unittest import mock
-from flask import current_app, g
+from flask import current_app, g, jsonify
 from app import microservice
 from app.db.comment import Comment
 from app.db import db
@@ -29,6 +29,7 @@ def app_context(app):
 
 @pytest.fixture
 def database(app_context):
+    db.init_db()
     comment = Comment(1223, 12343, "Comment body", id=1223)
     db.storeComment(comment)
     c = db.getComment(1223)
@@ -41,7 +42,7 @@ def test_database_connection(client):
      assert b"Database connected" in response.data
 
 def test_add_comment(client):
-    form = dict(UserId='1223',PostId='3234',Body='comment description')
+    form = dict(UserId='1223',PostId='3234',Body='comment description' ,ParentId='')
     response = client.post('/api/comment/new', data=form)
     assert response.status_code == 200
    
@@ -51,3 +52,28 @@ def test_get_comment(client ,database):
     assert response.status_code == 200
     assert b"1223" in response.data
 
+def test_get_comment_invalid_id(client, database):
+    response = client.get('/api/comment/id/1/')
+    assert response.status_code == 200
+    assert b"comment doesn't exist" in response.data
+
+def test_update_comment(client, database):
+    form = dict(UserId='1223',PostId='3234',Body='comment description' , CommentId='1223', ParentId='')
+    response = client.post('/api/comment/update', data=form)
+    assert response.status_code == 200
+    # c = db.getComment(1223)
+    # assert c.body == 'comment description'
+    
+def test_delete_comment(client, database):
+    form = dict(UserId='1223',PostId='3234',Body='comment description' , CommentId='1223', ParentId='')
+    response = client.post('/api/comment/delete', data=form)
+    assert response.status_code == 200
+
+def test_get_comment_by_post_id(client ,database):
+    response = client.get('/api/comments/postId/478')
+    assert response.status_code == 200
+   
+def test_get_comment_by_user_id(client ,database):
+    response = client.get('/api/comments/userId/478')
+    assert response.status_code == 200
+   

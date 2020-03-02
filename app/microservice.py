@@ -3,10 +3,11 @@ import os
 from app.db import db
 from app.init import create_app
 from app.db.comment import Comment
-from app import command
+from app import command, query
 
 app = create_app()
 db.init_app(app)
+
 
 @app.route("/")
 def main():
@@ -21,41 +22,40 @@ def db_test():
 @app.route("/api/comment/id/<id>/")
 def comment(id):
     response = {}
-    comment = db.getComment(id)
+    comment = query.getComment(id)
     if comment is None:
         return jsonify({"status":"error", "message":"comment doesn't exist"}, 400)
     else:
-        return jsonify(id=comment.id, body=comment.body)
-    return jsonify(response)
-
+        return comment.toJson()
+   
 
 @app.route("/api/comments/userId/<userId>")
 def comments_by_user_id(userId):
-    response = {}
-    response['type'] = 'Comment'
-    response['id'] = 1232
-    response['UserId'] = userId
-    response['PostId'] = '213344'
-    response['Body'] = 'Comment description'
+    comments = query.getCommentsUserId(userId)
+    response = []
+    for comment in comments:
+        response.append(comment.toJson())    
+
     return jsonify(response)
 
 @app.route("/api/comments/postId/<postId>")
 def comments_by_post_id(postId):
-    response = {}
-    response['type'] = 'Comment'
-    response['CommentId'] = '1232'
-    response['UserId'] = '23424'
-    response['PostId'] = postId
-    response['Body'] = 'Comment description'    
-    return jsonify(response)
+    comments = query.getCommentsPostId(postId)
+    response = []
+    for comment in comments:
+        response.append(comment.toJson())    
 
+    return jsonify(response)
+    
 
 @app.route("/api/comment/new", methods=["POST"])
 def new_comment():
     userId = request.form["UserId"]
     postId = request.form["PostId"]
     body = request.form["Body"]
-    command.new_comment(userId, postId, body)
+    parentId = request.form["ParentId"]
+    parentId = 0
+    command.new_comment(userId, postId, body, parent_id = parentId)
     resp = jsonify(success=True)
     return resp
 
@@ -64,8 +64,9 @@ def update_comment():
     commentId = request.form["CommentId"]
     userId = request.form["UserId"]
     postId = request.form["PostId"]
-    body = request.form["Body"]
-    command.update_comment(commentId, userId, postId, body)
+    body = request.form["Body"] 
+    parentId = request.form["ParentId"]
+    command.update_comment(commentId, userId, postId, body, parent_id = parentId)
     resp = jsonify(success=True)
     return resp
 
@@ -74,7 +75,7 @@ def update_comment():
 def delete_comment():
     userId = request.form["UserId"]
     postId = request.form["PostId"]
-    body = request.form["Body"]
-    command.delete_com(userId, postId, body)
+    commentId = request.form["CommentId"]
+    command.delete_comment(commentId, userId, postId)
     resp = jsonify(success=True)
     return resp
