@@ -3,7 +3,7 @@ import sqlite3
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext
-
+from app.db.comment import Comment
 
 def get_db():
     # if 'db' not in g:
@@ -39,7 +39,7 @@ def init_db():
 def init_db_command():
     """Clear the existing data and create new tables."""
     init_db()
-    click.echo('Initialized the database.')
+    click.echo('Initialized the database.' + current_app.config['MYSQL_DATABASE_DB'])
 
 def init_app(app):
     app.teardown_appcontext(close_db)
@@ -48,8 +48,49 @@ def init_app(app):
 
 def execute_script(sql):
     db = get_db()
-    cursor = db.cursor();
-    commands = sql.split(";");
+    cursor = db.cursor()
+    commands = sql.split(";")
     for c in commands:
         if len(c) > 1:
             cursor.execute(c+";")
+
+def storeEvent(event):
+    connection = get_db()
+    cursor = connection.cursor()
+    sql_insert_query = """ INSERT INTO EventStore
+                       (event, comment_id, post_id, user_id, created,body) VALUES (%s,%s,%s,%s, %s, %s);"""
+    cursor.execute(sql_insert_query, (event.type, event.comment.id, event.comment.postId, event.comment.userId ,event.comment.created, event.comment.body))
+
+
+
+def getComment(id):
+    connection = get_db()
+    cursor = connection.cursor()
+    sql = """SELECT * FROM Comments WHERE id=%s;"""
+
+    cursor.execute(sql,(id))
+    result = cursor.fetchone()
+    if(result == None):
+        return None
+    else:
+        print(result)
+        (id,user_id, post_id,created,body) = result
+        comment = Comment(user_id, post_id, body,id)
+        comment.created = created
+        return comment
+
+def storeComment(comment):
+    connection = get_db()
+    cursor = connection.cursor()
+    if comment.id == None:
+        print("Comment.id is empty")
+        sql_insert_query = """ INSERT INTO Comments
+                       (post_id, user_id, created, body) VALUES (%s,%s,%s,%s);"""
+        cursor.execute(sql_insert_query, ( comment.postId,
+     comment.userId , comment.created, comment.body))
+    else:
+        print("Comment.id is " + str(comment.id))
+        sql_insert_query = """ INSERT INTO Comments
+                       (id, post_id, user_id, created, body) VALUES (%s,%s,%s,%s, %s);"""
+        cursor.execute(sql_insert_query, ( comment.id, comment.postId,
+     comment.userId , comment.created, comment.body))

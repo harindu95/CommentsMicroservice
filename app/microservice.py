@@ -2,6 +2,8 @@ from flask import Flask,jsonify,request
 import os
 from app.db import db
 from app.init import create_app
+from app.db.comment import Comment
+import app.events as events
 
 app = create_app()
 db.init_app(app)
@@ -19,11 +21,11 @@ def db_test():
 @app.route("/api/comment/id/<id>/")
 def comment(id):
     response = {}
-    response['type'] = 'Comment'
-    response['id'] = id
-    response['UserId'] = '213344'
-    response['PostId'] = '213344'
-    response['Body'] = 'Comment description'
+    comment = db.getComment(id)
+    if comment is None:
+        return jsonify({"status":"error", "message":"comment doesn't exist"}, 400)
+    else:
+        return jsonify(id=comment.id, body=comment.body)
     return jsonify(response)
 
 
@@ -53,7 +55,9 @@ def new_comment():
     userId = request.form["UserId"]
     postId = request.form["PostId"]
     body = request.form["Body"]
-    ## store comment
+    comment = Comment(userId, postId, body)
+    event = events.newComment(comment)
+    events.fireEvent(event)
     resp = jsonify(success=True)
     return resp
 
@@ -63,16 +67,20 @@ def update_comment():
     userId = request.form["UserId"]
     postId = request.form["PostId"]
     body = request.form["Body"]
-    ## update comment
+    comment = Comment(userId, postId, body, id=commentId)
+    event = events.updateComment(comment)
+    events.fireEvent(event)
     resp = jsonify(success=True)
     return resp
 
 
 @app.route("/api/comment/delete", methods=["POST"])
 def delete_comment():
-    commentId = request.form["CommentId"]
     userId = request.form["UserId"]
     postId = request.form["PostId"]
-    ## delete comment
+    body = request.form["Body"]
+    comment = Comment(userId, postId, body)
+    event = events.deleteComment(comment)
+    events.fireEvent(event)
     resp = jsonify(success=True)
     return resp

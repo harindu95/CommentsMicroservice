@@ -2,9 +2,11 @@ from datetime import datetime
 
 class Comment:
 
-    def __init__(self):
-        self.id = 0
+    def __init__(self ,userId, postId, body, id= None):
+        self.id = id
         self.created = datetime.now()
-        self.userId = 0
-        self.postId = 0
-        self.body = ""
+        self.userId = userId
+        self.postId = postId
+        self.body = body
+
+    # def toJson():

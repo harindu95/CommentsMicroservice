@@ -1,4 +1,4 @@
 MYSQL_DATABASE_USER = 'microservice'
 MYSQL_DATABASE_PASSWORD = ''
-MYSQL_DATABASE_DB = 'comments'
+MYSQL_DATABASE_DB = 'test_comments'
 MYSQL_DATABASE_HOST = 'localhost'
