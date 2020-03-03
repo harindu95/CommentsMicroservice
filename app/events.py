@@ -1,4 +1,5 @@
 from app.db import db
+from app import event_handler
 
 class Event:
 
@@ -10,6 +11,7 @@ class Event:
 def fireEvent(event):
     # store event
     db.storeEvent(event)
+    event_handler.event_buffer.append(event)
 
 
 def newComment(comment):

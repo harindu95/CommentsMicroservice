@@ -31,7 +31,7 @@ def app_context(app):
 def database(app_context):
     db.init_db()
     comment = Comment(1223, 12343, "Comment body", id=1223)
-    db.storeComment(comment)
+    db.insertComment(comment)
     c = db.getComment(1223)
     yield db
 

@@ -7,7 +7,7 @@ from app import command, query
 
 app = create_app()
 db.init_app(app)
-
+query.setup(app)
 
 @app.route("/")
 def main():

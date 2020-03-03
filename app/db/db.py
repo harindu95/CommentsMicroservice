@@ -86,7 +86,7 @@ def getCommentsUserId(userId):
     sql = """SELECT * FROM Comments WHERE user_id=%s;"""
 
     cursor.execute(sql,(userId))
-    result = cursor.fetchone()
+    result = cursor.fetchall()
     comments = []
     if result == None:
         return comments
@@ -105,7 +105,7 @@ def getCommentsPostId(postId):
     sql = """SELECT * FROM Comments WHERE post_id=%s;"""
 
     cursor.execute(sql,(postId))
-    result = cursor.fetchone()
+    result = cursor.fetchall()
     comments = []
     if result == None:
         return comments
@@ -118,7 +118,7 @@ def getCommentsPostId(postId):
 
     return comments
 
-def storeComment(comment):
+def insertComment(comment):
     connection = get_db()
     cursor = connection.cursor()
     if comment.id == None:
@@ -133,3 +133,26 @@ def storeComment(comment):
                        (id, post_id, user_id, created, body, parent_id) VALUES (%s,%s,%s,%s,%s, %s);"""
         cursor.execute(sql_insert_query, ( comment.id, comment.postId,
      comment.userId , comment.created, comment.body, comment.parent_id))
+
+def updateComment(comment):
+    connection = get_db()
+    cursor = connection.cursor()
+    
+    sql_insert_query = """ UPDATE Comments
+                        SET post_id = %s,
+                            user_id = %s,
+                            created = %s,
+                            body = %s,
+                            parent_id = %s
+                       WHERE id=%s ;"""
+    cursor.execute(sql_insert_query, (comment.postId,
+    comment.userId , comment.created, comment.body, comment.parent_id, comment.id))
+
+
+def deleteComment(comment):
+    connection = get_db()
+    cursor = connection.cursor()
+    
+    sql_insert_query = """ DELETE Comments
+                    WHERE id=%s AND user_id=%s AND post_id=%s;"""
+    cursor.execute(sql_insert_query, (comment.id, comment.postId,comment.userId ))
