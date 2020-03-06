@@ -8,9 +8,10 @@ flag = threading.Condition()
 
 class Thread(threading.Thread):
 
-    def __init__(self):
+    def __init__(self, app):
         threading.Thread.__init__(self)
         self.running = True
+        self.app = app
 
     def run(self):
         print("thread started running")
@@ -18,7 +19,7 @@ class Thread(threading.Thread):
             self.handle_event() 
             with flag:
                 print("thread on wait")
-                flag.wait(2)
+                flag.wait()
     
     def stop(self):
         self.running = False
@@ -32,13 +33,16 @@ class Thread(threading.Thread):
             e = None
             with flag:
                 e = event_buffer.pop()
-            
+           
             if e.type == 'NEW COMMENT':
-                db.insertComment(e.comment)
+                with self.app.app_context():
+                    db.insertComment(e.comment)
             elif e.type == 'UPDATE COMMENT':
-                db.updateComment(e.comment)
+                with self.app.app_context():
+                    db.updateComment(e.comment)
             elif e.type == 'DELETE COMMENT':
-                db.deleteComment(e.comment)
+                with self.app.app_context():
+                    db.deleteComment(e.comment)
             else:
                 print("invalid event type")
 
@@ -49,7 +53,7 @@ class Thread(threading.Thread):
 def add_event(event):
     with flag:
         print("add event - notify")
-        # event_buffer.append(event)
+        event_buffer.append(event)
         flag.notify()
         
 
