@@ -1,12 +1,13 @@
 from app.db import db
 import threading
-from app.event_handler import handle_event
+from app import event_handler
 
-event_thread = threading.Timer(10,handle_event)
+event_thread = event_handler.Thread()
 event_thread.start()
 
 def close_thread(e=None):
-    event_thread.cancel()
+    event_thread.stop()
+    event_thread.join()
 
 def setup(app):
     app.teardown_appcontext(close_thread)

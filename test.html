@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <style >
+        input{
+            margin: 5px;
+        }
+
+        form {
+            display: inline-block;
+            border: 1px solid black;
+        }
+    </style>
+    <div>
+        <h2> New Comment</h2>
+    <form action="http://localhost:5000/api/comment/new" method="POST" target="_blank">
+        <label for="UserId">UserId:</label> 
+        <input type="text" name="UserId"><br>
+        <label for="PostId">PostId:</label> 
+        <input type="text" name="PostId"><br>
+        <label for="ParentId">ParentId:</label> 
+        <input type="text" name="ParentId"><br>
+        <label for="Body">Body:</label> 
+        <input type="text" name="Body"><br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
+<div>
+    <h2> Update Comment</h2>
+    <form action="http://localhost:5000/api/comment/update" method="POST" target="_blank">
+        <label for="CommentId">CommentId:</label> 
+        <input type="text" name="CommentId"><br>
+        <label for="UserId">UserId:</label> 
+        <input type="text" name="UserId"><br>
+        <label for="PostId">PostId:</label> 
+        <input type="text" name="PostId"><br>
+        <label for="ParentId">ParentId:</label> 
+        <input type="text" name="ParentId"><br>
+        <label for="Body">Body:</label> 
+        <input type="text" name="Body"><br>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
+<div>
+        <h2> Delete Comment</h2>
+        <form action="http://localhost:5000/api/comment/delete" method="POST" target="_blank">
+            <label for="CommentId">CommentId:</label> 
+            <input type="text" name="CommentId"><br>
+            <label for="UserId">UserId:</label> 
+            <input type="text" name="UserId"><br>
+            <label for="PostId">PostId:</label> 
+            <input type="text" name="PostId"><br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+</body>
+</html>

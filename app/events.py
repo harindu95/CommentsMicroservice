@@ -11,7 +11,7 @@ class Event:
 def fireEvent(event):
     # store event
     db.storeEvent(event)
-    event_handler.event_buffer.append(event)
+    event_handler.add_event(event)
 
 
 def newComment(comment):
