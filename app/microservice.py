@@ -27,14 +27,14 @@ def comment(id):
         return jsonify({"status":"error", "message":"comment doesn't exist"}, 400)
     else:
         return comment.toJson()
-   
+
 
 @app.route("/api/comments/userId/<userId>")
 def comments_by_user_id(userId):
     comments = query.getCommentsUserId(userId)
     response = []
     for comment in comments:
-        response.append(comment.toJson())    
+        response.append(comment.toJson())
 
     return jsonify(response)
 
@@ -43,10 +43,10 @@ def comments_by_post_id(postId):
     comments = query.getCommentsPostId(postId)
     response = []
     for comment in comments:
-        response.append(comment.toJson())    
+        response.append(comment.toJson())
 
     return jsonify(response)
-    
+
 
 @app.route("/api/comment/new", methods=["POST"])
 def new_comment():
@@ -59,17 +59,36 @@ def new_comment():
     resp = jsonify(success=True)
     return resp
 
+# def validate_commentId(self, commentId):
+#         if ceil(commentId) != commentId
+#             raise ValidationError('Comment Id must be numerical only.')
+# def validate_bodyLength(self, body):
+#     length = SELECT LEN(body);
+#         if length > 140
+#             raise ValidationError('Comment is too long.')
+
+
 @app.route("/api/comment/update", methods=["POST"])
 def update_comment():
     commentId = request.form["CommentId"]
     userId = request.form["UserId"]
     postId = request.form["PostId"]
-    body = request.form["Body"] 
+    body = request.form["Body"]
     parentId = request.form["ParentId"]
     command.update_comment(commentId, userId, postId, body, parent_id = parentId)
     resp = jsonify(success=True)
     return resp
 
+# def validate_postId(self, postId):
+#         if ceil(postId) != postId
+#             raise ValidationError('Post Id must be numerical only.')
+# def validate_commentId(self, commentId):
+#         if ceil(commentId) != commentId
+#             raise ValidationError('Comment Id must be numerical only.')
+# def validate_bodyLength(self, body):
+#     length = SELECT LEN(body);
+#         if length > 140
+#             raise ValidationError('Comment is too long.')
 
 @app.route("/api/comment/delete", methods=["POST"])
 def delete_comment():
@@ -79,3 +98,10 @@ def delete_comment():
     command.delete_comment(commentId, userId, postId)
     resp = jsonify(success=True)
     return resp
+
+# def validate_postId(self, postId):
+#         if ceil(postId) != postId
+#             raise ValidationError('Post Id must be numerical only.')
+# def validate_commentId(self, commentId):
+#         if ceil(commentId) != commentId
+#             raise ValidationError('Comment Id must be numerical only.')
