@@ -134,6 +134,8 @@ def insertComment(comment):
         cursor.execute(sql_insert_query, ( comment.id, comment.postId,
      comment.userId , comment.created, comment.body, comment.parent_id))
 
+    connection.commit()
+
 def updateComment(comment):
     connection = get_db()
     cursor = connection.cursor()
@@ -147,12 +149,14 @@ def updateComment(comment):
                        WHERE id=%s ;"""
     cursor.execute(sql_insert_query, (comment.postId,
     comment.userId , comment.created, comment.body, comment.parent_id, comment.id))
-
+    connection.commit()
 
 def deleteComment(comment):
+    
     connection = get_db()
     cursor = connection.cursor()
     
     sql_insert_query = """ DELETE Comments
                     WHERE id=%s AND user_id=%s AND post_id=%s;"""
     cursor.execute(sql_insert_query, (comment.id, comment.postId,comment.userId ))
+    connection.commit()

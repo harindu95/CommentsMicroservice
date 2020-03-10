@@ -41,12 +41,14 @@ def comments_by_user_id(userId):
 @app.route("/api/comments/postId/<postId>")
 def comments_by_post_id(postId):
     comments = query.getCommentsPostId(postId)
-    response = []
+    response = "["
     for comment in comments:
-        response.append(comment.toJson())
+        # response = response + comment.toJson() +","
+        response = comment.toJson()
 
-    return jsonify(response)
-
+    # response += "]"
+    return response
+    
 
 @app.route("/api/comment/new", methods=["POST"])
 def new_comment():
