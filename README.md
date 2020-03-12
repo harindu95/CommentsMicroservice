@@ -23,3 +23,7 @@ I decide to use pipenv https://docs.python-guide.org/dev/virtualenvs/.
 ### Initialize database
     export FLASK_APP=run.py
     flask init-db
+
+### Test Coverage report
+    coverage run -m pytest test
+    coverage report --include="app/*"
