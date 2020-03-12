@@ -11,5 +11,8 @@ class Comment:
         self.body = body
         self.parent_id = parent_id
 
-    def toJson(self):
-        return jsonify(id=self.id, body=self.body)
+    def serialize(self):
+        return dict({'id':self.id, 'created' : self.created, 'UserId':self.userId,
+         'PostId' :self.postId,
+         'Body': self.body, 'ParentId' :self.parent_id})
+        

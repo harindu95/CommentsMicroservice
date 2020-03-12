@@ -36,21 +36,17 @@ def comments_by_user_id(userId):
     if not comments :
         return jsonify({"status":"error", "message":"no comments posted by user"}, 400)
     else:
-        for comment in comments:
-            response.append(comment.toJson())
-        return jsonify(response)
+        return jsonify([c.serialize() for c in comments])
 
 
 @app.route("/api/comments/postId/<postId>")
 def comments_by_post_id(postId):
     comments = query.getCommentsPostId(postId)
-    response = []
     if not comments :
         return jsonify({"status":"error", "message":"no comments posted under post"}, 400)
     else:
-        for comment in comments:
-            response.append(comment.toJson())
-        return jsonify(response)
+        return jsonify([c.serialize() for c in comments])
+        
 
     
 
