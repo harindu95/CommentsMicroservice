@@ -47,7 +47,6 @@ def test_add_comment(client):
     assert response.status_code == 200
    
 def test_get_comment(client ,database):
-    
     response = client.get('/api/comment/id/1223/')
     assert response.status_code == 200
     assert b"1223" in response.data
@@ -65,15 +64,26 @@ def test_update_comment(client, database):
     # assert c.body == 'comment description'
     
 def test_delete_comment(client, database):
-    form = dict(UserId='1223',PostId='3234',Body='comment description' , CommentId='1223', ParentId='')
+    form = dict(UserId='1223',PostId='3234',Body='comment description',CommentId='1223',ParentId='')
     response = client.post('/api/comment/delete', data=form)
     assert response.status_code == 200
 
 def test_get_comment_by_post_id(client ,database):
     response = client.get('/api/comments/postId/478')
     assert response.status_code == 200
+    
+def test_get_comment_by_invalid_post_id(client,database):
+    response = client.get('/api/comments/postId/125')
+    assert response.status_code == 200
+    assert b"no comments posted under post" in response.data
    
 def test_get_comment_by_user_id(client ,database):
     response = client.get('/api/comments/userId/478')
     assert response.status_code == 200
-   
+    
+def test_get_comment_by_invalid_user_id(client,database):
+    response = client.get('/api/comments/userId/125')
+    assert response.status_code == 200
+    assert b"no comments posted by user" in response.data
+    
+

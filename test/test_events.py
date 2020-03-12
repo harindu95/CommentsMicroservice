@@ -50,3 +50,4 @@ def test_event_handler(client, database):
     assert len(event_handler.event_buffer) == 0
     comments = db.getCommentsUserId(3)
     assert len(comments) == 1
+

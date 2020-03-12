@@ -23,7 +23,7 @@ def db_test():
 def comment(id):
     response = {}
     comment = query.getComment(id)
-    if comment is None:
+    if comment is None :
         return jsonify({"status":"error", "message":"comment doesn't exist"}, 400)
     else:
         return comment.toJson()
@@ -33,19 +33,23 @@ def comment(id):
 def comments_by_user_id(userId):
     comments = query.getCommentsUserId(userId)
     response = []
-    for comment in comments:
-        response.append(comment.toJson())    
-
-    return jsonify(response)
+    if not comments :
+        return jsonify({"status":"error", "message":"no comments posted by user"}, 400)
+    else:
+        for comment in comments:
+            response.append(comment.toJson())
+        return jsonify(response)
 
 @app.route("/api/comments/postId/<postId>")
 def comments_by_post_id(postId):
     comments = query.getCommentsPostId(postId)
     response = []
-    for comment in comments:
-        response.append(comment.toJson())    
-
-    return jsonify(response)
+    if not comments :
+        return jsonify({"status":"error", "message":"no comments posted under post"}, 400)
+    else:
+        for comment in comments:
+            response.append(comment.toJson())
+        return jsonify(response)
     
 
 @app.route("/api/comment/new", methods=["POST"])
