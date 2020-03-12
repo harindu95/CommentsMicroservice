@@ -9,6 +9,7 @@ verify_ssl = true
 flask = "*"
 flask-mysql = "*"
 pytest = "*"
+coverage = "*"
 
 [requires]
 python_version = "3"
