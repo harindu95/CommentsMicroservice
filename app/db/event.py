@@ -10,18 +10,18 @@ class Event(db.Model):
     event_created = db.Column(db.TIMESTAMP, default=True)
     comment_id = db.Column(db.Integer, nullable= True)
     post_id = db.Column(db.Integer, nullable = False)
-    user_name = db.Column(db.String(100), nullable = False)
+    user_id = db.Column(db.Integer, nullable = False)
     created = db.Column(db.TIMESTAMP, default=True)
     body = db.Column(db.Text, nullable = True)
     parent_id = db.Column(db.Integer, nullable=True)
     
     
-    def __init__(self , type , user_name, post_id, body = None, id = None, parent_id=None):
+    def __init__(self , type , user_id, post_id, body = None, id = None, parent_id=None):
         self.event_type = type
         self.event_created = datetime.now()
         self.comment_id = id
         self.created = datetime.now()
-        self.user_name = user_name
+        self.user_id = user_id
         self.post_id = post_id
         self.body = body
         self.parent_id = parent_id
@@ -34,4 +34,5 @@ class Event(db.Model):
         
 
     def getComment(self):
-        return Comment(self.user_name, self.post_id, body = self.body, id = self.comment_id, parent_id=self.parent_id)
+        return Comment(self.user_id, self.post_id, body = self.body,
+         id = self.comment_id, parent_id=self.parent_id)

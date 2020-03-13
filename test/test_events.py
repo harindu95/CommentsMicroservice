@@ -48,6 +48,6 @@ def test_event_handler(app, client, database):
     event_thread = event_handler.Thread(app)
     event_thread.handle_event()
     assert len(event_handler.event_buffer) == 0
-    comments = Comment.query.filter_by(user_name='3').all()
+    comments = Comment.query.filter_by(user_id=3).all()
     assert len(comments) == 1
 

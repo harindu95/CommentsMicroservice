@@ -30,7 +30,7 @@ def init_db():
 def init_db_command():
     """Clear the existing data and create new tables."""
     init_db()
-    click.echo('Initialized the database.' + current_app.config['MYSQL_DATABASE_DB'])
+    click.echo('Initialized the database.')
 
 def init_app(app):
     db.init_app(app)

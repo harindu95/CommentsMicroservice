@@ -19,8 +19,8 @@ def setup(app):
 def getComment(id):
     return Comment.query.filter_by(id = id).first()
 
-def getCommentsUserId(user_name):
-    return Comment.query.filter_by(user_name=user_name).all()
+def getCommentsUserId(user_id):
+    return Comment.query.filter_by(user_id=user_id).all()
 
 def getCommentsPostId(postId):
     return Comment.query.filter_by(post_id = postId).all()
