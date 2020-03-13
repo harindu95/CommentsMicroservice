@@ -33,14 +33,17 @@ class Thread(threading.Thread):
             e = None
             with flag:
                 e = event_buffer.pop()
-           
-            if e.type == 'NEW COMMENT':
+
+            if e.event_type == 'NEW COMMENT':
                 with self.app.app_context():
-                    db.insertComment(e.comment)
-            elif e.type == 'UPDATE COMMENT':
+                    comment = e.getComment()
+                    db.get_db().session.add(comment)
+                    db.get_db().session.commit()
+            elif e.event_type == 'UPDATE COMMENT':
                 with self.app.app_context():
-                    db.updateComment(e.comment)
-            elif e.type == 'DELETE COMMENT':
+                    comment = e.getComment()
+                  
+            elif e.event_type == 'DELETE COMMENT':
                 with self.app.app_context():
                     db.deleteComment(e.comment)
             else:

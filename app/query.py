@@ -1,4 +1,4 @@
-from app.db import db
+from app.db.comment import Comment
 import threading
 from app import event_handler
 from flask import current_app
@@ -17,10 +17,10 @@ def setup(app):
     # pass
 
 def getComment(id):
-    return db.getComment(id)
+    return Comment.query.filter_by(id = id).first()
 
-def getCommentsUserId(userId):
-    return db.getCommentsUserId(userId)
+def getCommentsUserId(user_name):
+    return Comment.query.filter_by(user_name=user_name).all()
 
 def getCommentsPostId(postId):
-    return db.getCommentsPostId(postId)
+    return Comment.query.filter_by(post_id = postId).all()

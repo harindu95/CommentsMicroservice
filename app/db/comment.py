@@ -1,18 +1,28 @@
 from datetime import datetime
 from flask import jsonify
+from app.db.db import db
 
-class Comment:
+# db = database.get_db()
 
-    def __init__(self ,userId, postId, body, id= None, parent_id=None):
+class Comment(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, nullable = False)
+    user_name = db.Column(db.String(100), nullable = False)
+    created = db.Column(db.TIMESTAMP, default=True)
+    body = db.Column(db.Text, nullable = False)
+    parent_id = db.Column(db.Integer, nullable=True)
+    
+    def __init__(self ,user_name, post_id, body, id = None, parent_id=None):
         self.id = id
         self.created = datetime.now()
-        self.userId = userId
-        self.postId = postId
+        self.user_name = user_name
+        self.post_id = post_id
         self.body = body
         self.parent_id = parent_id
 
     def serialize(self):
-        return dict({'id':self.id, 'created' : self.created, 'UserId':self.userId,
-         'PostId' :self.postId,
-         'Body': self.body, 'ParentId' :self.parent_id})
+        return dict({'id':self.id, 'created' : self.created, 'user_name':self.user_name,
+         'post_id': self.post_id,
+         'body': self.body, 'parent_id' :self.parent_id})
         

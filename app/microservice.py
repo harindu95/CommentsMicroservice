@@ -1,9 +1,10 @@
 from flask import Flask,jsonify,request
 import os
-from app.db import db
 from app.init import create_app
+from app.db import db
 from app.db.comment import Comment
 from app import command, query
+
 
 app = create_app()
 db.init_app(app)
@@ -26,7 +27,7 @@ def comment(id):
     if comment is None :
         return jsonify({"status":"error", "message":"comment doesn't exist"}, 400)
     else:
-        return comment.toJson()
+        return jsonify(comment.serialize())
 
 
 @app.route("/api/comments/userId/<userId>")
@@ -77,7 +78,7 @@ def update_comment():
     postId = request.form["PostId"]
     body = request.form["Body"]
     parentId = request.form["ParentId"]
-    command.update_comment(commentId, userId, postId, body, parent_id = parentId)
+    command.update_comment(commentId, userId, postId, body, parent_id = None)
     resp = jsonify(success=True)
     return resp
 

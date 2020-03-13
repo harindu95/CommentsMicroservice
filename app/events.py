@@ -10,19 +10,8 @@ class Event:
 
 def fireEvent(event):
     # store event
-    db.storeEvent(event)
+    database = db.get_db()
+    database.session.add(event)
+    database.session.commit()
     event_handler.add_event(event)
 
-
-def newComment(comment):
-    event = Event("NEW COMMENT", comment)
-    return event
-
-def updateComment(comment):
-    event = Event("UPDATE COMMENT", comment)
-    return event
-
-
-def deleteComment(comment):
-    event = Event("DELETE COMMENT", comment)
-    return event

@@ -2,18 +2,14 @@ import pytest
 from unittest import mock
 from flask import current_app, g, jsonify
 from app import microservice
-from app.db.comment import Comment
+
 from app.db import db
-
-
+from app.db.comment import Comment
 
 @pytest.fixture(scope='session')
 def app():
-    app = microservice.app
-    app.config['MYSQL_DATABASE_USER'] = 'microservice'
-    app.config['MYSQL_DATABASE_PASSWORD'] = ''
-    app.config['MYSQL_DATABASE_DB'] = 'test_comments'
-    app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+    app = microservice.app  
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
     return app
 
 @pytest.fixture
@@ -31,8 +27,9 @@ def app_context(app):
 def database(app_context):
     db.init_db()
     comment = Comment(1223, 12343, "Comment body", id=1223)
-    db.insertComment(comment)
-    c = db.getComment(1223)
+    database = db.get_db()
+    database.session.add(comment)
+    database.session.commit()
     yield db
 
 
