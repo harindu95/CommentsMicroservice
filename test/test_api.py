@@ -39,7 +39,7 @@ def test_database_connection(client):
      assert b"Database connected" in response.data
 
 def test_add_comment(client):
-    form = dict(UserId='1223',PostId='3234',Body='comment description' ,ParentId='')
+    form = dict(UserId=1223,PostId=3234,Body='comment description' ,ParentId='')
     response = client.post('/api/comment/new', data=form)
     assert response.status_code == 200
    
@@ -54,14 +54,14 @@ def test_get_comment_invalid_id(client, database):
     assert b"comment doesn't exist" in response.data
 
 def test_update_comment(client, database):
-    form = dict(UserId='1223',PostId='3234',Body='comment description' , CommentId='1223', ParentId='')
+    form = dict(UserId=1223,PostId=3234,Body='comment description' , CommentId=1223, ParentId='')
     response = client.post('/api/comment/update', data=form)
     assert response.status_code == 200
     # c = db.getComment(1223)
     # assert c.body == 'comment description'
     
 def test_delete_comment(client, database):
-    form = dict(UserId='1223',PostId='3234',Body='comment description',CommentId='1223',ParentId='')
+    form = dict(UserId=1223,PostId=3234,Body='comment description',CommentId=1223,ParentId='')
     response = client.post('/api/comment/delete', data=form)
     assert response.status_code == 200
 

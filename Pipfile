@@ -12,6 +12,7 @@ pytest = "*"
 coverage = "*"
 flask-sqlalchemy = "*"
 flask-migrate = "*"
+schema = "*"
 
 [requires]
 python_version = "3"

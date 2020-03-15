@@ -10,6 +10,7 @@ db = SQLAlchemy(session_options = {
     'expire_on_commit': False
 })
 
+
 def get_db():
     return db
 
@@ -44,12 +45,14 @@ def insertComment(comment):
 
 
 def updateComment(comment):
+    from app.db.comment import Comment
     c = Comment.query.filter_by(id = comment.id).first()
     if c != None:
         c.update(comment.serialize())
         db.session.commit()
 
 def deleteComment(comment):
+    from app.db.comment import Comment
     c = Comment.query.filter_by(id = comment.id).first()
     if c != None:
         c.delete()

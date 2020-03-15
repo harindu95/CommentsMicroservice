@@ -4,7 +4,8 @@ from app.init import create_app
 from app.db import db
 from app.db.comment import Comment
 from app import command, query
-
+from app.validation import *
+from schema import SchemaError
 
 app = create_app()
 db.init_app(app)
@@ -53,13 +54,17 @@ def comments_by_post_id(postId):
 
 @app.route("/api/comment/new", methods=["POST"])
 def new_comment():
-    userId = request.form["UserId"]
-    postId = request.form["PostId"]
-    body = request.form["Body"]
-    parentId = request.form["ParentId"]
-    parentId = 0
-    command.new_comment(userId, postId, body, parent_id = parentId)
-    resp = jsonify(success=True)
+    data = request.form.to_dict()
+    try:
+        data = newCommentSchema.validate(data)
+        userId = data["UserId"]
+        postId = data["PostId"]
+        body = data["Body"]
+        parentId = data["ParentId"]
+        command.new_comment(userId, postId, body, parent_id = parentId)
+        resp = jsonify(success=True)
+    except SchemaError as e:
+        resp = jsonify(error=schema_message(e))
     return resp
 
 # def validate_commentId(self, commentId):
@@ -73,13 +78,18 @@ def new_comment():
 
 @app.route("/api/comment/update", methods=["POST"])
 def update_comment():
-    commentId = request.form["CommentId"]
-    userId = request.form["UserId"]
-    postId = request.form["PostId"]
-    body = request.form["Body"]
-    parentId = request.form["ParentId"]
-    command.update_comment(commentId, userId, postId, body, parent_id = None)
-    resp = jsonify(success=True)
+    data = request.form.to_dict()
+    try:        
+        data = updateCommentSchema.validate(data)
+        userId = data["UserId"]
+        postId = data["PostId"]
+        body = data["Body"]
+        parentId = data["ParentId"]   
+        commentId = data["CommentId"]
+        command.update_comment(commentId, userId, postId, body, parent_id = parentId)
+        resp = jsonify(success=True)
+    except SchemaError as e:
+        resp = jsonify(error=schema_message(e))
     return resp
 
 # def validate_postId(self, postId):
@@ -95,11 +105,19 @@ def update_comment():
 
 @app.route("/api/comment/delete", methods=["POST"])
 def delete_comment():
-    userId = request.form["UserId"]
-    postId = request.form["PostId"]
-    commentId = request.form["CommentId"]
-    command.delete_comment(commentId, userId, postId)
-    resp = jsonify(success=True)
+    data = request.form.to_dict()
+    try:        
+        data = deleteCommentSchema.validate(data)
+        userId = data["UserId"]
+        postId = data["PostId"]       
+        commentId = data["CommentId"]
+        command.delete_comment(commentId, userId, postId)       
+        resp = jsonify(success=True)   
+
+    except SchemaError as e:
+        print(e.autos)
+        resp = jsonify(error=schema_message(e))
+
     return resp
 
 # def validate_postId(self, postId):

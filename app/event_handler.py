@@ -45,7 +45,7 @@ class Thread(threading.Thread):
                   
             elif e.event_type == 'DELETE COMMENT':
                 with self.app.app_context():
-                    db.deleteComment(e.comment)
+                    db.deleteComment(e.getComment())
             else:
                 print("invalid event type")
 
