@@ -42,6 +42,7 @@ class Thread(threading.Thread):
             elif e.event_type == 'UPDATE COMMENT':
                 with self.app.app_context():
                     comment = e.getComment()
+                    db.updateComment(comment)
                   
             elif e.event_type == 'DELETE COMMENT':
                 with self.app.app_context():
