@@ -47,7 +47,7 @@ def insertComment(comment):
 def updateComment(comment):
     from app.db.comment import Comment
     c = Comment.query.filter_by(id = comment.id).first()
-    print(c.id)
+
     if c != None:
         c.update(comment)
         db.session.commit()

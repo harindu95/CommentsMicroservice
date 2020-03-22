@@ -9,7 +9,7 @@ from schema import SchemaError
 
 app = create_app()
 db.init_app(app)
-query.setup(app)
+
 
 @app.route("/")
 def main():

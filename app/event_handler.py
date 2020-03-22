@@ -1,63 +1,69 @@
 from app.db import db
 import time
 import threading
+from app.db.event import Event
+import os.path 
+import os
+import pickle
 
-event_buffer = []
-flag = threading.Condition()
 
-
-class Thread(threading.Thread):
-
-    def __init__(self, app):
-        threading.Thread.__init__(self)
-        self.running = True
-        self.app = app
-
-    def run(self):
-        print("thread started running")
-        while self.running:
-            self.handle_event() 
-            with flag:
-                print("thread on wait")
-                flag.wait()
-    
-    def stop(self):
-        self.running = False
-
-    def handle_event(self):
-        print("handler started")
-        length = 0
-        with flag:
-            length = len(event_buffer)
-        while(length > 0):
-            e = None
-            with flag:
-                e = event_buffer.pop()
-
-            if e.event_type == 'NEW COMMENT':
-                with self.app.app_context():
-                    comment = e.getComment()
-                    db.insertComment(comment)
-            elif e.event_type == 'UPDATE COMMENT':
-                print("updating object ....")
-                with self.app.app_context():
-                    comment = e.getComment()
-                    db.updateComment(comment)
-                  
-            elif e.event_type == 'DELETE COMMENT':
-                with self.app.app_context():
-                    db.deleteComment(e.getComment())
-            else:
-                print("invalid event type")
-
-            with flag:
-               length = len(event_buffer)
- 
-
-def add_event(event):
-    with flag:
-        print("add event - notify")
-        event_buffer.append(event)
-        flag.notify()
+def check_events():
+    lock = 'event.lock'
+    if os.path.isfile(lock):
+        # someone else is handling events
+        return
+    else:
+        event_id = 0
+        with open(lock,"w") as l:
+            l.write("Event id lock") 
         
+        event_id = read_event_id()
+        event_id = handle_event(event_id)
+        write_event_id(event_id)
+        os.remove(lock)
 
+
+
+def write_event_id(event_id):
+    filename = 'event_id'
+    outfile = open(filename,'wb')
+    pickle.dump(event_id,outfile)
+    outfile.close()
+
+def read_event_id():
+    filename = 'event_id'    
+    try:
+        with open(filename, 'rb') as f:
+            event_id = pickle.load(f)
+    except (OSError, IOError) as e:
+        event_id = 0
+        with open(filename, 'wb') as f:
+            pickle.dump(event_id, f)
+    return event_id
+
+
+def handle_event(event_id):
+
+    
+    e = Event.query.filter(Event.event_id > event_id).first()
+    while(e != None):
+        
+        if e.event_type == 'NEW COMMENT':
+            comment = e.getComment()
+            db.insertComment(comment)
+
+        elif e.event_type == 'UPDATE COMMENT':
+            print("updating object ....")
+            comment = e.getComment()
+            db.updateComment(comment)
+            
+        elif e.event_type == 'DELETE COMMENT':
+            db.deleteComment(e.getComment())
+        else:
+            print("invalid event type")
+
+        event_id = e.event_id
+        e = Event.query.filter(Event.event_id > event_id).first()
+
+
+    return event_id

@@ -13,5 +13,5 @@ def fireEvent(event):
     database = db.get_db()
     database.session.add(event)
     database.session.commit()
-    event_handler.add_event(event)
+
 

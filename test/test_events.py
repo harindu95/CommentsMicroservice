@@ -33,21 +33,21 @@ def database(app_context):
     db.insertComment(comment)
     yield db
 
-def test_event_buffer(client, database):
-    event_handler.event_buffer = []
-    form = dict(UserId='1223',PostId='3234',Body='comment description' ,ParentId='')
-    response = client.post('/api/comment/new', data=form)
-    assert response.status_code == 200
-    assert len(event_handler.event_buffer) == 1
+# def test_event_buffer(client, database):
+#     event_handler.event_buffer = []
+#     form = dict(UserId='1223',PostId='3234',Body='comment description' ,ParentId='')
+#     response = client.post('/api/comment/new', data=form)
+#     assert response.status_code == 200
+#     assert len(event_handler.event_buffer) == 1
 
-def test_event_handler(app, client, database):
-    event_handler.event_buffer = []
-    form = dict(UserId='3',PostId='3234',Body='comment description' ,ParentId='')
-    response = client.post('/api/comment/new', data=form)
-    assert len(event_handler.event_buffer) == 1
-    event_thread = event_handler.Thread(app)
-    event_thread.handle_event()
-    assert len(event_handler.event_buffer) == 0
-    comments = Comment.query.filter_by(user_id=3).all()
-    assert len(comments) == 1
+# def test_event_handler(app, client, database):
+#     event_handler.event_buffer = []
+#     form = dict(UserId='3',PostId='3234',Body='comment description' ,ParentId='')
+#     response = client.post('/api/comment/new', data=form)
+#     assert len(event_handler.event_buffer) == 1
+#     event_thread = event_handler.Thread(app)
+#     event_thread.handle_event()
+#     assert len(event_handler.event_buffer) == 0
+#     comments = Comment.query.filter_by(user_id=3).all()
+#     assert len(comments) == 1
 
