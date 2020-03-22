@@ -26,3 +26,10 @@ class Comment(db.Model):
          'post_id': self.post_id,
          'body': self.body, 'parent_id' :self.parent_id})
         
+
+    def update(self, other):
+        self.created = other.created
+        self.user_id = other.user_id
+        self.post_id = other.post_id
+        self.body = other.body
+        self.parent_id = other.parent_id

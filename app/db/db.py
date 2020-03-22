@@ -47,14 +47,15 @@ def insertComment(comment):
 def updateComment(comment):
     from app.db.comment import Comment
     c = Comment.query.filter_by(id = comment.id).first()
+    print(c.id)
     if c != None:
-        c.update(comment.serialize())
+        c.update(comment)
         db.session.commit()
 
 def deleteComment(comment):
     from app.db.comment import Comment
     c = Comment.query.filter_by(id = comment.id).first()
     if c != None:
-        c.delete()
+        db.session.delete(c)
         db.session.commit()
 

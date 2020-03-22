@@ -37,9 +37,9 @@ class Thread(threading.Thread):
             if e.event_type == 'NEW COMMENT':
                 with self.app.app_context():
                     comment = e.getComment()
-                    db.get_db().session.add(comment)
-                    db.get_db().session.commit()
+                    db.insertComment(comment)
             elif e.event_type == 'UPDATE COMMENT':
+                print("updating object ....")
                 with self.app.app_context():
                     comment = e.getComment()
                     db.updateComment(comment)
