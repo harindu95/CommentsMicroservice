@@ -33,9 +33,7 @@ updateCommentSchema = Schema({
 
 
 deleteCommentSchema = Schema({
-    'CommentId' : Use(int, error=errors['CommentId']),
-    'UserId' : Use(int, error=errors['UserId']),
-    'PostId': Use(int, error=errors['PostId']),
+    'CommentId' : Use(int, error=errors['CommentId']),    
     })
 
 
@@ -44,4 +42,8 @@ def schema_message(e):
         if m != None:
             return m
 
+    for m in e.autos:
+        if m != None:
+            return m
+            
     return None

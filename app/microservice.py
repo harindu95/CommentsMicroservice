@@ -86,8 +86,11 @@ def update_comment():
         body = data["Body"]
         parentId = data["ParentId"]   
         commentId = data["CommentId"]
-        command.update_comment(commentId, userId, postId, body, parent_id = parentId)
-        resp = jsonify(success=True)
+        result = command.update_comment(commentId, userId, postId, body, parent_id = parentId)
+        if result :     
+            resp = jsonify(success=True)   
+        else:
+            resp = jsonify(error="Comment doesn't exist")
     except SchemaError as e:
         resp = jsonify(error=schema_message(e))
     return resp
@@ -107,12 +110,13 @@ def update_comment():
 def delete_comment():
     data = request.form.to_dict()
     try:        
-        data = deleteCommentSchema.validate(data)
-        userId = data["UserId"]
-        postId = data["PostId"]       
+        data = deleteCommentSchema.validate(data)         
         commentId = data["CommentId"]
-        command.delete_comment(commentId, userId, postId)       
-        resp = jsonify(success=True)   
+        result = command.delete_comment(commentId) 
+        if result :     
+            resp = jsonify(success=True)   
+        else:
+            resp = jsonify(error="Comment doesn't exist")
 
     except SchemaError as e:
         print(e.autos)
