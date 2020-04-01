@@ -10,6 +10,12 @@ from app.db.comment import Comment
 
 @pytest.fixture(scope='session')
 def app():
+    ''' Config application for testing.
+    
+        Use Sqlite database for testing.
+        Set app.config[TESTING] to True
+        
+    '''
     app = microservice.app  
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
     app.config['TESTING'] = True
@@ -28,6 +34,7 @@ def app_context(app):
 
 @pytest.fixture
 def database(app_context):
+    '''Initialize database and populate with 1 Comment entry'''
     db.init_db()
     comment = Comment(1223, 12343, "Comment body", id=1223)
     database = db.get_db()

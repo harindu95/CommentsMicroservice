@@ -30,7 +30,14 @@ def db_test():
 
 @app.route("/api/comment/id/<id>/")
 def comment(id):
-    """Retrieve Comment using CommentID"""
+    """Retrieve Comment using CommentID
+    
+      Args: 
+        id (int): comment id
+
+      Return:
+        comment: a JSON representation of Comment
+    """
     response = {}
     try:
         commentIdSchema.validate(id)
@@ -47,7 +54,14 @@ def comment(id):
 
 @app.route("/api/comments/userId/<userId>")
 def comments_by_user_id(userId):
-    """Retrieve multiple comments by UserID"""
+    """Retrieve multiple comments by UserID
+    
+     Args: 
+        userId (int): user id of comments
+
+      Return:
+        comments: a JSON representation of a list of Comments
+    """
     response = []
     try:
         userIdSchema.validate(userId)
@@ -65,7 +79,14 @@ def comments_by_user_id(userId):
 
 @app.route("/api/comments/postId/<postId>")
 def comments_by_post_id(postId):
-    '''Retrieve multiple comments by post id'''
+    '''Retrieve multiple comments by post id
+    
+     Args: 
+        postId (int): comment id
+
+      Return:
+        comments: a JSON representation of a list of Comments
+    '''
     try:
         postIdSchema.validate(postId)
         comments = query.getCommentsPostId(postId)
@@ -82,7 +103,17 @@ def comments_by_post_id(postId):
 
 @app.route("/api/comment/new", methods=["POST"])
 def new_comment():
-    """Create a new comment."""
+    """Create a new comment using POST request.
+
+     Args: 
+        UserId (int): user id
+        PostId (int): post id
+        Body   (str): comment text
+        ParentId (int): Parent comment id
+
+      Return:
+        success = True or error message
+    """
     data = request.form.to_dict()
     try:
         data = newCommentSchema.validate(data)
@@ -100,8 +131,19 @@ def new_comment():
 
 @app.route("/api/comment/update", methods=["POST"])
 def update_comment():
-    """Update an existing comment. Return an error 
-    message if comment doesn't exist"""
+    """Update an existing comment with POST request. Return an error 
+    message if comment doesn't exist
+    
+    Args: 
+        CommentId (int) : comment id
+        UserId (int): user id
+        PostId (int): post id
+        Body   (str): comment text
+        ParentId (int): Parent comment id
+
+      Return:
+        success = True or error message
+    """
     data = request.form.to_dict()
     try:        
         data = updateCommentSchema.validate(data)
@@ -123,8 +165,15 @@ def update_comment():
 
 @app.route("/api/comment/delete", methods=["POST"])
 def delete_comment():
-    """Delete an existing comment. Return an error 
-    message if comment doesn't exist"""
+    """Delete an existing comment using POST request. Return an error 
+    message if comment doesn't exist
+    
+      Args: 
+        CommentId (int) : comment id
+       
+      Return:
+        success = True or error message
+    """
     data = request.form.to_dict()
     try:        
         data = deleteCommentSchema.validate(data)         

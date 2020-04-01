@@ -36,13 +36,21 @@ def init_app(app):
 
 
 def insertComment(comment):
-    '''Insert comment into database'''
+    '''Insert comment into database
+    
+    Args:
+        comment (Comment) : Comment to be stored in database 
+    '''
     db.session.add(comment)
     db.session.commit()
 
 
 def updateComment(comment):
-    '''Update existing comment from database.'''
+    '''Update existing comment from database.
+    
+    Args:
+        comment (Comment) : Comment to be stored in database 
+    '''
     from app.db.comment import Comment
     c = Comment.query.filter_by(id = comment.id).first()
 
@@ -51,7 +59,11 @@ def updateComment(comment):
         db.session.commit()
 
 def deleteComment(comment):
-    '''Delete existing comment from database.'''
+    '''Delete existing comment from database.
+    
+    Args:
+        comment (Comment) : Comment to be deleted in database 
+    '''
     from app.db.comment import Comment
     c = Comment.query.filter_by(id = comment.id).first()
     if c != None:

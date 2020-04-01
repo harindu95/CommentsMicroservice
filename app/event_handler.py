@@ -1,3 +1,5 @@
+'''Read events from event table and update comment table'''
+
 from app.db import db
 import time
 import threading
@@ -10,6 +12,8 @@ from app.logging import log
 
 
 def check_events():
+    '''Check if there are events to be updated.'''
+
     lock = 'event.lock'
     if os.path.isfile(lock):
         # someone else is handling events
@@ -32,12 +36,16 @@ def check_events():
 
 
 def write_event_id(event_id , filename='event_id'):
+    '''Write last updated event id to file.'''
+    
     log.info("Write event_id to file ")
     outfile = open(filename,'wb')
     pickle.dump(event_id,outfile)
     outfile.close()
 
 def read_event_id( filename='event_id'):
+    '''Read last updated event id from file'''
+
     log.info("Read event_id from file ")  
     try:
         with open(filename, 'rb') as f:
@@ -50,6 +58,14 @@ def read_event_id( filename='event_id'):
 
 
 def handle_event(event_id):
+    '''Update tables if events exits.
+    
+    Args:
+        event_id (int): event id
+    
+    Return:
+        event_id (int):last updated event_id
+    '''
 
     log.info("Handling events - event_id %s", event_id) 
     e = Event.query.filter(Event.event_id > event_id).first()
