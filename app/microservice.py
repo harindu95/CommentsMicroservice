@@ -1,3 +1,5 @@
+"""This module handles flask routing and json endpoints"""
+
 from flask import Flask,jsonify,request
 import os
 from app.init import create_app
@@ -6,54 +8,81 @@ from app.db.comment import Comment
 from app import command, query
 from app.validation import *
 from schema import SchemaError
+from app.logging import log
 
 app = create_app()
-db.init_app(app)
+log.info("Application initialized")
 
+db.init_app(app)
+log.info("Connected to database")
 
 @app.route("/")
 def main():
+    """ Basic root endpoint. Not used within application"""
     return "Welcome !!"
 
 # Need to setup mysql beforehand
 @app.route("/database")
 def db_test():
-    d = db.get_db()
+    """Basic endpoint used to test the database connection"""
+    d = db.get_db()    
     return "Database connected"
 
 @app.route("/api/comment/id/<id>/")
 def comment(id):
+    """Retrieve Comment using CommentID"""
     response = {}
-    comment = query.getComment(id)
-    if comment is None :
-        return jsonify({"status":"error", "message":"comment doesn't exist"}, 400)
-    else:
-        return jsonify(comment.serialize())
+    try:
+        commentIdSchema.validate(id)
+        comment = query.getComment(id)
+        if comment is None :
+            return jsonify({"status":"error", "message":"comment doesn't exist"}, 400)
+        else:
+            return jsonify(comment.serialize())
 
+    except SchemaError as e:
+        resp = jsonify(error=schema_message(e))
+        log.error("Exception occurred", exc_info=True)
+        return resp
 
 @app.route("/api/comments/userId/<userId>")
 def comments_by_user_id(userId):
-    comments = query.getCommentsUserId(userId)
+    """Retrieve multiple comments by UserID"""
     response = []
-    if not comments :
-        return jsonify({"status":"error", "message":"no comments posted by user"}, 400)
-    else:
-        return jsonify([c.serialize() for c in comments])
+    try:
+        userIdSchema.validate(userId)
+        comments = query.getCommentsUserId(userId)
+        
+        if not comments :
+            return jsonify({"status":"error", "message":"no comments posted by user"}, 400)
+        else:
+            return jsonify([c.serialize() for c in comments])
 
+    except SchemaError as e:
+        resp = jsonify(error=schema_message(e))
+        log.error("Exception occurred", exc_info=True)
+        return resp
 
 @app.route("/api/comments/postId/<postId>")
 def comments_by_post_id(postId):
-    comments = query.getCommentsPostId(postId)
-    if not comments :
-        return jsonify({"status":"error", "message":"no comments posted under post"}, 400)
-    else:
-        return jsonify([c.serialize() for c in comments])
+    '''Retrieve multiple comments by post id'''
+    try:
+        postIdSchema.validate(postId)
+        comments = query.getCommentsPostId(postId)
+        if not comments :
+            return jsonify({"status":"error", "message":"no comments posted under post"}, 400)
+        else:
+            return jsonify([c.serialize() for c in comments])
         
-
+    except SchemaError as e:
+        resp = jsonify(error=schema_message(e))
+        log.error("Exception occurred", exc_info=True)
+        return resp
     
 
 @app.route("/api/comment/new", methods=["POST"])
 def new_comment():
+    """Create a new comment."""
     data = request.form.to_dict()
     try:
         data = newCommentSchema.validate(data)
@@ -65,19 +94,14 @@ def new_comment():
         resp = jsonify(success=True)
     except SchemaError as e:
         resp = jsonify(error=schema_message(e))
+        log.error("Exception occurred", exc_info=True)
     return resp
-
-# def validate_commentId(self, commentId):
-#         if ceil(commentId) != commentId
-#             raise ValidationError('Comment Id must be numerical only.')
-# def validate_bodyLength(self, body):
-#     length = SELECT LEN(body);
-#         if length > 140
-#             raise ValidationError('Comment is too long.')
 
 
 @app.route("/api/comment/update", methods=["POST"])
 def update_comment():
+    """Update an existing comment. Return an error 
+    message if comment doesn't exist"""
     data = request.form.to_dict()
     try:        
         data = updateCommentSchema.validate(data)
@@ -93,21 +117,14 @@ def update_comment():
             resp = jsonify(error="Comment doesn't exist")
     except SchemaError as e:
         resp = jsonify(error=schema_message(e))
+        log.error("Exception occurred", exc_info=True)
     return resp
 
-# def validate_postId(self, postId):
-#         if ceil(postId) != postId
-#             raise ValidationError('Post Id must be numerical only.')
-# def validate_commentId(self, commentId):
-#         if ceil(commentId) != commentId
-#             raise ValidationError('Comment Id must be numerical only.')
-# def validate_bodyLength(self, body):
-#     length = SELECT LEN(body);
-#         if length > 140
-#             raise ValidationError('Comment is too long.')
 
 @app.route("/api/comment/delete", methods=["POST"])
 def delete_comment():
+    """Delete an existing comment. Return an error 
+    message if comment doesn't exist"""
     data = request.form.to_dict()
     try:        
         data = deleteCommentSchema.validate(data)         
@@ -119,14 +136,6 @@ def delete_comment():
             resp = jsonify(error="Comment doesn't exist")
 
     except SchemaError as e:
-        print(e.autos)
         resp = jsonify(error=schema_message(e))
-
+        log.error("Exception occurred", exc_info=True)
     return resp
-
-# def validate_postId(self, postId):
-#         if ceil(postId) != postId
-#             raise ValidationError('Post Id must be numerical only.')
-# def validate_commentId(self, commentId):
-#         if ceil(commentId) != commentId
-#             raise ValidationError('Comment Id must be numerical only.')

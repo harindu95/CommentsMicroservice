@@ -1,3 +1,5 @@
+'''Launch Flask Application'''
+
 from app import microservice
 
 application = microservice.app

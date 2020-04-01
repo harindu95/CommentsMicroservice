@@ -5,6 +5,7 @@ from app.db.db import db
 # db = database.get_db()
 
 class Comment(db.Model):
+    '''Database Model Comment Class'''
 
     id = db.Column(db.Integer, primary_key=True)
     post_id = db.Column(db.Integer, nullable = False)
@@ -22,12 +23,14 @@ class Comment(db.Model):
         self.parent_id = parent_id
 
     def serialize(self):
+        '''Serialize object into a dictionary'''
         return dict({'id':self.id, 'created' : self.created, 'user_id':self.user_id,
          'post_id': self.post_id,
          'body': self.body, 'parent_id' :self.parent_id})
         
 
     def update(self, other):
+        '''Copy data of the another object into this object'''
         self.created = other.created
         self.user_id = other.user_id
         self.post_id = other.post_id

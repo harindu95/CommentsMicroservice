@@ -1,5 +1,6 @@
-import sqlite3
+'''This module handles database interactions'''
 
+import sqlite3
 import click
 from flask import current_app, g
 from flask.cli import with_appcontext
@@ -12,16 +13,12 @@ db = SQLAlchemy(session_options = {
 
 
 def get_db():
+    '''Return database connection'''
     return db
 
-def close_db(e=None):
-    db = g.pop('db', None)
-
-    if db is not None:
-        db.close()
 
 def init_db():
-  
+    '''Initialize database. Drop the tables and recreate them.'''
     db.drop_all()
     # db.session.commit()
     db.create_all()
@@ -35,16 +32,17 @@ def init_db_command():
 
 def init_app(app):
     db.init_app(app)
-    app.teardown_appcontext(close_db)
-    app.cli.add_command(init_db_command)
+
 
 
 def insertComment(comment):
+    '''Insert comment into database'''
     db.session.add(comment)
     db.session.commit()
 
 
 def updateComment(comment):
+    '''Update existing comment from database.'''
     from app.db.comment import Comment
     c = Comment.query.filter_by(id = comment.id).first()
 
@@ -53,6 +51,7 @@ def updateComment(comment):
         db.session.commit()
 
 def deleteComment(comment):
+    '''Delete existing comment from database.'''
     from app.db.comment import Comment
     c = Comment.query.filter_by(id = comment.id).first()
     if c != None:

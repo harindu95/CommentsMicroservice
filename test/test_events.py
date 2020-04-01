@@ -1,3 +1,5 @@
+'''Test event handling'''
+
 import pytest 
 from unittest import mock
 from flask import current_app, g, jsonify
@@ -5,14 +7,13 @@ from app import microservice, event_handler
 from app.db.comment import Comment
 from app.db import db
 from app import query
+from app.event_handler import handle_event
 
 @pytest.fixture(scope='session')
 def app():
     app = microservice.app
-    app.config['MYSQL_DATABASE_USER'] = 'microservice'
-    app.config['MYSQL_DATABASE_PASSWORD'] = ''
-    app.config['MYSQL_DATABASE_DB'] = 'test_comments'
-    app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+    app.config['TESTING'] = True
     return app
 
 @pytest.fixture
@@ -33,21 +34,19 @@ def database(app_context):
     db.insertComment(comment)
     yield db
 
-# def test_event_buffer(client, database):
-#     event_handler.event_buffer = []
-#     form = dict(UserId='1223',PostId='3234',Body='comment description' ,ParentId='')
-#     response = client.post('/api/comment/new', data=form)
-#     assert response.status_code == 200
-#     assert len(event_handler.event_buffer) == 1
+def test_event_handler(app, client, database):
+    event_handler.event_buffer = []
+    form = dict(UserId='3',PostId='3234',Body='comment description' ,ParentId='')
+    response = client.post('/api/comment/new', data=form)     
+    handle_event(0)
+    comments = Comment.query.filter_by(user_id=3).all()
+    assert len(comments) == 1
 
-# def test_event_handler(app, client, database):
-#     event_handler.event_buffer = []
-#     form = dict(UserId='3',PostId='3234',Body='comment description' ,ParentId='')
-#     response = client.post('/api/comment/new', data=form)
-#     assert len(event_handler.event_buffer) == 1
-#     event_thread = event_handler.Thread(app)
-#     event_thread.handle_event()
-#     assert len(event_handler.event_buffer) == 0
-#     comments = Comment.query.filter_by(user_id=3).all()
-#     assert len(comments) == 1
-
+def test_event_handler_repeated(app, client, database):
+    event_handler.event_buffer = []
+    form = dict(UserId='3',PostId='3234',Body='comment description' ,ParentId='')
+    response = client.post('/api/comment/new', data=form)     
+    handle_event(0)
+    handle_event(0)
+    comments = Comment.query.filter_by(user_id=3).all()
+    assert len(comments) == 2

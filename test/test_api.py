@@ -1,3 +1,5 @@
+'''Test API calls and check if they return success'''
+
 import pytest 
 from unittest import mock
 from flask import current_app, g, jsonify
@@ -10,6 +12,7 @@ from app.db.comment import Comment
 def app():
     app = microservice.app  
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
+    app.config['TESTING'] = True
     return app
 
 @pytest.fixture
@@ -61,7 +64,7 @@ def test_update_comment(client, database):
     # assert c.body == 'comment description'
     
 def test_delete_comment(client, database):
-    form = dict(UserId=1223,PostId=3234,Body='comment description',CommentId=1223,ParentId='')
+    form = dict(CommentId=1223)
     response = client.post('/api/comment/delete', data=form)
     assert response.status_code == 200
 
