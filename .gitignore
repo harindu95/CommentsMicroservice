@@ -3,7 +3,6 @@ __pycache__
 .coverage
 .DS_Store
 event_id
-log/*
 *.html
 test_files
 Document_files
