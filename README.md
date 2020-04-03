@@ -10,7 +10,7 @@ I decide to use pipenv https://docs.python-guide.org/dev/virtualenvs/.
     4. Install required dependencies
         pipenv install
     5. Start the server on localhost: 
-        python3 microservice.py
+        python3 application.py
 
 ## Setup database
     1. Install MySql
